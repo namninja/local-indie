@@ -1,12 +1,13 @@
 const Validator = require("validator");
 const isEmpty = require("is-empty");
+const User = require("../models/user");
 
 function validateRegisterInput(data) {
   // Instantiate our errors object
   let errors = {};
 
   // Convert empty fields to an empty string so we can use validator functions
-  data.name = !isEmpty(data.name) ? data.name : "";
+
   data.email = !isEmpty(data.email) ? data.email : "";
   data.password = !isEmpty(data.password) ? data.password : "";
   data.password2 = !isEmpty(data.password2) ? data.password2 : "";
@@ -14,16 +15,15 @@ function validateRegisterInput(data) {
   // Check for empty fields, valid email formats, password requirements and confirm
   // password equality using validator functions
 
-  // Name checks
-  if (Validator.isEmpty(data.name)) {
-    errors.name = "Name field is required";
-  }
   // Email checks
   if (Validator.isEmpty(data.email)) {
     errors.email = "Email field is required";
   } else if (!Validator.isEmail(data.email)) {
     errors.email = "Email is invalid";
+  } else if (User.findOne({ email: data.email }) === undefined) {
+    errors.email = "Email already exists";
   }
+
   // Password checks
   if (Validator.isEmpty(data.password)) {
     errors.password = "Password field is required";

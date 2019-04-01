@@ -9,5 +9,6 @@ module.exports = {
   TEST_DATABASE_URL:
     process.env.TEST_DATABASE_URL || "mongodb://localhost/test-local-indie",
   PORT: process.env.PORT || 8080,
-  secretOrKey: "wutangclanaintnothingtofuckwith"
+  JWT_SECRET: "wutangclanaintnothingtofuckwith",
+  JWT_Expiry: 172800
 };
