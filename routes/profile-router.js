@@ -8,10 +8,12 @@ const User = require("../models/user");
 //Displays information tailored according to the logged in user
 
 router.get("/artists", (req, res, next) => {
-  console.log(req);
-  Profile.find({ state: req.state, city: req.city })
+  Profile.find({
+    upperState: req.body.state.toUpperCase(),
+    upperCity: req.body.city.toUpperCase()
+  })
     .then(artists => {
-      res.json(artists);
+      res.status(200).json(artists.map(artist => artist.serialize()));
     })
     .catch(err => {
       console.error(err);
@@ -19,25 +21,44 @@ router.get("/artists", (req, res, next) => {
     });
 });
 
-router.get("/profile/:id", (req, res, next) => {
-  console.log(req);
-  res.json({
-    message: "You made it to the secure route",
-    user: req.user,
-    token: req.query.secret_token
-  });
+router.get("/artists/:id", (req, res, next) => {
+  Profile.findOne({ _id: req.params.id })
+    .then(artist => {
+      res.status(200).json(artist.serialize());
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    });
 });
-router.post(
-  "/profile",
+
+router.get(
+  "/profile/:id",
   passport.authenticate("jwt", { session: false }),
   (req, res, next) => {
-    //We'll just send back the user details and the token
-    console.log(req);
-    res.json({
-      message: "You made it to the secure route",
-      user: req.user,
-      token: req.query.secret_token
-    });
+    Profile.findOne({ user: req.params.id })
+      .then(artist => {
+        res.status(200).json(artist.serialize());
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+      });
+  }
+);
+
+router.post(
+  "/edit-profile/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res, next) => {
+    Profile.findOneAndUpdate({ user: req.params.id }, req.body, { new: true })
+      .then(artist => {
+        res.status(201).json(artist.serialize());
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+      });
   }
 );
 

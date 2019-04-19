@@ -6,10 +6,14 @@ const morgan = require("morgan");
 const app = express();
 const { PORT, DATABASE_URL } = require("./config/keys.js");
 const passport = require("passport");
+require("./models/profile");
+require("./models/user");
+require("./models/event");
 // Passport config
 require("./config/auth");
 const userRoute = require("./routes/user-router");
 const profileRoute = require("./routes/profile-router");
+const eventRoute = require("./routes/event-router");
 
 // CORS
 app.use(function(req, res, next) {
@@ -38,8 +42,8 @@ app.use(passport.initialize());
 
 // Routes
 app.use("/", userRoute);
-//We plugin our jwt strategy as a middleware so only verified users can access this route
 app.use("/", profileRoute);
+app.use("/", eventRoute);
 // launch ======================================================================
 
 // closeServer needs access to a server object, but that only

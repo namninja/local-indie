@@ -43,13 +43,31 @@ router.post(
   passport.authenticate("register", { session: false }),
   async (req, res, next) => {
     let { profileName, city, state } = req.body;
+    let normalizedCity = req.body.city.toUpperCase();
+    let normalizedState = req.body.state.toUpperCase();
     let user = req.user._id;
-    console.log(req.user._id, "-----------------over here");
-    Profile.create({ profileName, city, state, user })
+    // We don't want to store the sensitive information such as the
+    // user password in the token so we pick only the email and id
+    const body = { _id: req.user._id, username: req.user.email };
+    // Sign the JWT token and populate the payload with the user email and id
+    const token = jwt.sign({ user: body }, keys.JWT_SECRET);
+    const loggedUser = {
+      _id: req.user._id,
+      email: req.user.email,
+      token: token
+    };
+    Profile.create({
+      profileName,
+      city,
+      state,
+      user,
+      normalizedCity,
+      normalizedState
+    })
       .then(
         res.json({
           message: "Signup successful",
-          user: req.user
+          user: loggedUser
         })
       )
       .catch(err => {
@@ -76,9 +94,13 @@ router.post("/login", validateLogin, async (req, res, next) => {
         const body = { _id: user._id, username: user.email };
         // Sign the JWT token and populate the payload with the user email and id
         const token = jwt.sign({ user: body }, keys.JWT_SECRET);
-
+        const loggedUser = {
+          _id: user._id,
+          email: user.email,
+          token: token
+        };
         // Send back the token to the user
-        return res.json({ token });
+        return res.json({ user: loggedUser });
       });
     } catch (error) {
       return next(error);
@@ -86,21 +108,4 @@ router.post("/login", validateLogin, async (req, res, next) => {
   })(req, res, next);
 });
 
-router.get("/artists", async (req, res, next) => {
-  console.log(req);
-  User.find({ state: req.state, city: req.city })
-    .then(artists => {
-      res.json(artists.map(artist => artist.serialize()));
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({ message: "Internal server error" });
-    });
-});
-
-router.post(
-  "/edit-profile/:id",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res, next) => {}
-);
 module.exports = router;

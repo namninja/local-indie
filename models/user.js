@@ -17,7 +17,7 @@ const UserSchema = new Schema({
   },
   created: {
     type: Date,
-    default: Date.now
+    default: Date.now()
   }
 });
 
@@ -43,4 +43,4 @@ UserSchema.methods.isValidPassword = async function(password) {
   return compare;
 };
 
-module.exports = User = mongoose.model("users", UserSchema);
+module.exports = mongoose.model("User", UserSchema);

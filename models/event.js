@@ -2,33 +2,38 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // Create Schema
-const ProfileSchema = new Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  imgURL: {
+const EventSchema = new Schema({
+  userProfile: { type: mongoose.Schema.Types.ObjectId, ref: "Profile" },
+  eventImg: {
     type: String,
     trim: true
   },
-  profileName: {
+  eventName: {
     type: String,
     trim: true,
     required: true
   },
-  genre: {
-    type: String,
+  eventDate: {
+    type: Date,
     trim: true,
-    required: false
+    required: true
   },
-  website: {
-    type: String,
-    trim: true,
-    required: false
-  },
-  city: {
+  eventAddress: {
     type: String,
     trim: true,
     required: true
   },
-  state: {
+  eventAddress2: {
+    type: String,
+    trim: true,
+    required: false
+  },
+  eventCity: {
+    type: String,
+    trim: true,
+    required: true
+  },
+  eventState: {
     type: String,
     trim: true,
     required: true
@@ -43,40 +48,32 @@ const ProfileSchema = new Schema({
     trim: true,
     required: true
   },
-  about: {
+  eventCost: {
     type: String,
     required: false
   },
-  soundCloud: {
+  eventStart: {
     type: String,
     required: false
   },
-  date: {
-    type: Date,
-    default: Date.now
+  eventEnd: {
+    type: String,
+    required: false
+  },
+  eventDetails: {
+    type: String,
+    required: false
   }
 });
 
-ProfileSchema.pre("find", function(next) {
+EventSchema.pre("find", function(next) {
   this.populate("user");
   next();
 });
 
-ProfileSchema.pre("findOne", function(next) {
+EventSchema.pre("findOne", function(next) {
   this.populate("user");
   next();
 });
-ProfileSchema.methods.serialize = function() {
-  return {
-    id: this._id,
-    imgURL: this.imgURL,
-    profileName: this.profileName,
-    genre: this.genre,
-    website: this.website,
-    city: this.city,
-    state: this.state,
-    about: this.about,
-    soundCloud: this.soundCloud
-  };
-};
-module.exports = mongoose.model("Profile", ProfileSchema);
+
+module.exports = mongoose.model("Event", EventSchema);
