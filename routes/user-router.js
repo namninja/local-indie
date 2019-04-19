@@ -9,8 +9,10 @@ const validateRegisterInput = require("../validation/register");
 const validateLoginInput = require("../validation/login");
 // Load User model
 const User = require("../models/user");
+const Profile = require("../models/profile");
 
 function validateRegister(req, res, next) {
+  console.log(req.body);
   // Form validation
   const { errors, isValid } = validateRegisterInput(req.body);
   // Check validation
@@ -36,14 +38,24 @@ function validateLogin(req, res, next) {
 // @access Public
 
 router.post(
-  "/register",
+  "/signup",
   validateRegister,
   passport.authenticate("register", { session: false }),
   async (req, res, next) => {
-    res.json({
-      message: "Signup successful",
-      user: req.user
-    });
+    let { profileName, city, state } = req.body;
+    let user = req.user._id;
+    console.log(req.user._id, "-----------------over here");
+    Profile.create({ profileName, city, state, user })
+      .then(
+        res.json({
+          message: "Signup successful",
+          user: req.user
+        })
+      )
+      .catch(err => {
+        console.error(err);
+        res.status(500).json({ error: "something went horribly awry" });
+      });
   }
 );
 
@@ -74,4 +86,21 @@ router.post("/login", validateLogin, async (req, res, next) => {
   })(req, res, next);
 });
 
+router.get("/artists", async (req, res, next) => {
+  console.log(req);
+  User.find({ state: req.state, city: req.city })
+    .then(artists => {
+      res.json(artists.map(artist => artist.serialize()));
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    });
+});
+
+router.post(
+  "/edit-profile/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res, next) => {}
+);
 module.exports = router;

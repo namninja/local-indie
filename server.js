@@ -9,7 +9,7 @@ const passport = require("passport");
 // Passport config
 require("./config/auth");
 const userRoute = require("./routes/user-router");
-const secureRoute = require("./routes/secure-router");
+const profileRoute = require("./routes/profile-router");
 
 // CORS
 app.use(function(req, res, next) {
@@ -39,7 +39,7 @@ app.use(passport.initialize());
 // Routes
 app.use("/", userRoute);
 //We plugin our jwt strategy as a middleware so only verified users can access this route
-app.use("/user", secureRoute);
+app.use("/", profileRoute);
 // launch ======================================================================
 
 // closeServer needs access to a server object, but that only
