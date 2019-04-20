@@ -12,7 +12,6 @@ const User = require("../models/user");
 const Profile = require("../models/profile");
 
 function validateRegister(req, res, next) {
-  console.log(req.body);
   // Form validation
   const { errors, isValid } = validateRegisterInput(req.body);
   // Check validation

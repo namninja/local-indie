@@ -64,7 +64,6 @@ options.secretOrKey = keys.JWT_SECRET;
 passport.use(
   "jwt",
   new JwtStrategy(options, (jwt_payload, done) => {
-    console.log(jwt_payload, "-------------------------------");
     User.findById(jwt_payload.user._id)
       .then(user => {
         if (user) {
