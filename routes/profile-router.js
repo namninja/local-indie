@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const passport = require("passport");
 const bodyParser = require("body-parser");
@@ -5,6 +6,14 @@ const jsonParser = bodyParser.json();
 const router = express.Router();
 const Profile = require("../models/profile");
 const User = require("../models/user");
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_SECRET
+});
+
 //Displays information tailored according to the logged in user
 
 router.get("/artists", (req, res, next) => {
@@ -61,5 +70,12 @@ router.post(
       });
   }
 );
-
+router.post(
+  "/image-upload/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const path = req.files[0].path;
+    cloudinary.uploader.upload(path).then(image => res.json([image]));
+  }
+);
 module.exports = router;

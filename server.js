@@ -6,6 +6,8 @@ const morgan = require("morgan");
 const app = express();
 const { PORT, DATABASE_URL } = require("./config/keys.js");
 const passport = require("passport");
+const cloudinary = require("cloudinary").v2;
+const formData = require("express-form-data");
 require("./models/profile");
 require("./models/user");
 require("./models/event");
@@ -14,6 +16,12 @@ require("./config/auth");
 const userRoute = require("./routes/user-router");
 const profileRoute = require("./routes/profile-router");
 const eventRoute = require("./routes/event-router");
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_SECRET
+});
 
 // CORS
 app.use(function(req, res, next) {
@@ -25,6 +33,8 @@ app.use(function(req, res, next) {
   }
   next();
 });
+
+app.use(formData.parse());
 
 app.use(morgan("dev")); // log every request to the console
 
