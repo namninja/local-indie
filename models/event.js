@@ -87,5 +87,22 @@ EventSchema.pre("findOne", function(next) {
   this.populate("user");
   next();
 });
-
+EventSchema.methods.serialize = function() {
+  return {
+    id: this._id,
+    eventImg: this.eventImg,
+    eventName: this.eventName,
+    eventDate: moment(this.eventDate).format("ddd, MMM DD, YYYY"),
+    eventVenue: this.eventVenue,
+    eventAddress: this.eventAddress,
+    eventAddress2: this.eventAddress2,
+    eventCity: this.eventCity,
+    eventState: this.eventState,
+    eventZip: this.eventZip,
+    eventCost: this.eventCost,
+    eventStart: this.eventStart,
+    eventEnd: this.eventEnd,
+    eventDetails: this.eventDetails
+  };
+};
 module.exports = mongoose.model("Event", EventSchema);

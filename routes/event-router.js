@@ -80,7 +80,7 @@ router.get("/profile/events/:id", (req, res, next) => {
     { sort: { date: 1 } }
   )
     .then(events => {
-      res.status(201).json(events);
+      res.status(201).json(events.map(event => event.serialize()));
     })
     .catch(err => {
       console.error(err);
