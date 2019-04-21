@@ -6,7 +6,9 @@ const EventSchema = new Schema({
   userProfile: { type: mongoose.Schema.Types.ObjectId, ref: "Profile" },
   eventImg: {
     type: String,
-    trim: true
+    trim: true,
+    default:
+      "https://res.cloudinary.com/namninja/image/upload/v1555809657/dzpmw1hbngbmv9u5qb0i.png"
   },
   eventName: {
     type: String,
@@ -17,6 +19,11 @@ const EventSchema = new Schema({
     type: Date,
     trim: true,
     required: true
+  },
+  eventVenue: {
+    type: String,
+    trim: true,
+    required: false
   },
   eventAddress: {
     type: String,
@@ -47,6 +54,11 @@ const EventSchema = new Schema({
     type: String,
     trim: true,
     required: true
+  },
+  eventZip: {
+    type: String,
+    trim: true,
+    required: false
   },
   eventCost: {
     type: String,

@@ -6,7 +6,9 @@ const ProfileSchema = new Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   imgURL: {
     type: String,
-    trim: true
+    trim: true,
+    default:
+      "https://res.cloudinary.com/namninja/image/upload/v1555809657/dzpmw1hbngbmv9u5qb0i.png"
   },
   profileName: {
     type: String,

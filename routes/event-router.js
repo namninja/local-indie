@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const passport = require("passport");
 const bodyParser = require("body-parser");
@@ -5,15 +6,19 @@ const jsonParser = bodyParser.json();
 const router = express.Router();
 const Profile = require("../models/profile");
 const Event = require("../models/event");
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_SECRET
+});
 
 router.post(
-  "/post-event",
+  "/post-event/:id",
   passport.authenticate("jwt", { session: false }),
   (req, res, next) => {
-    let normalizedCity = req.body.eventCity.toUpperCase();
-    let normalizedState = req.body.eventState.toUpperCase();
-    req.body.normalizedCity = normalizedCity;
-    req.body.normalizedState = normalizedState;
+    req.body.userProfile = req.params.id;
     Event.create(req.body)
       .then(
         res.status(201).json({
@@ -27,20 +32,7 @@ router.post(
       });
   }
 );
-router.post(
-  "/post-event/:id",
-  passport.authenticate("jwt", { session: false }),
-  (req, res, next) => {
-    Event.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
-      .then(event => {
-        res.status(201).json(event);
-      })
-      .catch(err => {
-        console.error(err);
-        res.status(500).json({ message: "Internal server error" });
-      });
-  }
-);
+
 router.delete(
   "/post-event/:id",
   passport.authenticate("jwt", { session: false }),
@@ -116,5 +108,13 @@ router.get("/find-events", (req, res, next) => {
       res.status(500).json({ message: "Internal server error" });
     });
 });
-
+router.post(
+  "/image-upload/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const path = req.files[0].path;
+    cloudinary.uploader.upload(path).then(image => res.json([image]));
+  }
+);
+module.exports = router;
 module.exports = router;
