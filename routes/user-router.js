@@ -107,4 +107,27 @@ router.post("/login", validateLogin, async (req, res, next) => {
   })(req, res, next);
 });
 
+const jwtAuth = passport.authenticate("jwt", {
+  session: false,
+  failWithError: true
+});
+
+router.get("/api/validate", jwtAuth, async (req, res, next) => {
+  console.log(req.user, "-----------------------------here");
+  try {
+    if (!req.user) {
+      const error = new Error("Invalid Token");
+      return next(error);
+    }
+    const loggedUser = {
+      _id: req.user._id,
+      email: req.user.email
+    };
+    return res.status(200).json({ user: loggedUser });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;

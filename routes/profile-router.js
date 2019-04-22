@@ -16,10 +16,11 @@ cloudinary.config({
 
 //Displays information tailored according to the logged in user
 
-router.get("/artists", (req, res, next) => {
+router.post("/artists", (req, res, next) => {
+  console.log(req);
   Profile.find({
-    upperState: req.body.state.toUpperCase(),
-    upperCity: req.body.city.toUpperCase()
+    normalizedState: req.body.state.toUpperCase(),
+    normalizedCity: req.body.city.toUpperCase()
   })
     .then(artists => {
       res.status(200).json(artists.map(artist => artist.serialize()));
@@ -29,7 +30,27 @@ router.get("/artists", (req, res, next) => {
       res.status(500).json({ message: "Internal server error" });
     });
 });
-
+router.get("/artists/states", (req, res, next) => {
+  Profile.distinct("normalizedState")
+    .then(states => {
+      res.status(200).json(states);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    });
+});
+router.get("/artists/states/:id", (req, res, next) => {
+  Profile.find({ normalizedState: req.params.id })
+    .distinct("normalizedCity")
+    .then(cities => {
+      res.status(200).json(cities);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    });
+});
 router.get("/artists/:id", (req, res, next) => {
   Profile.findOne({ _id: req.params.id })
     .then(artist => {

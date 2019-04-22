@@ -81,4 +81,9 @@ ProfileSchema.methods.serialize = function() {
     soundCloud: this.soundCloud
   };
 };
+ProfileSchema.methods.states = function() {
+  return {
+    state: this.normalizedState
+  };
+};
 module.exports = mongoose.model("Profile", ProfileSchema);
