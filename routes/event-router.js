@@ -71,7 +71,7 @@ router.get("/events/:id", (req, res, next) => {
     });
 });
 
-router.get("/profile/events/:id", (req, res, next) => {
+router.get("/artist/events/:id", (req, res, next) => {
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   Event.find(

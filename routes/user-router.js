@@ -113,7 +113,6 @@ const jwtAuth = passport.authenticate("jwt", {
 });
 
 router.get("/api/validate", jwtAuth, async (req, res, next) => {
-  console.log(req.user, "-----------------------------here");
   try {
     if (!req.user) {
       const error = new Error("Invalid Token");

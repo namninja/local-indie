@@ -17,7 +17,6 @@ cloudinary.config({
 //Displays information tailored according to the logged in user
 
 router.post("/artists", (req, res, next) => {
-  console.log(req);
   Profile.find({
     normalizedState: req.body.state.toUpperCase(),
     normalizedCity: req.body.city.toUpperCase()
@@ -51,7 +50,7 @@ router.get("/artists/states/:id", (req, res, next) => {
       res.status(500).json({ message: "Internal server error" });
     });
 });
-router.get("/artists/:id", (req, res, next) => {
+router.get("/artist/:id", (req, res, next) => {
   Profile.findOne({ _id: req.params.id })
     .then(artist => {
       res.status(200).json(artist.serialize());
