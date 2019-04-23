@@ -47,12 +47,21 @@ router.delete(
 );
 
 // might reconfigure this one
-router.get("/events", (req, res, next) => {
+router.post("/events", (req, res, next) => {
+  console.log(req.body);
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1.5);
-  Event.find({ eventDate: { $gt: yesterday } }, null, { sort: { date: 1 } })
+  Event.find(
+    {
+      normalizedState: req.body.state.toUpperCase(),
+      normalizedCity: req.body.city.toUpperCase(),
+      eventDate: { $gt: yesterday }
+    },
+    null,
+    { sort: { date: 1 } }
+  )
     .then(events => {
-      res.status(201).json(events);
+      res.status(201).json(events.map(event => event.serialize()));
     })
     .catch(err => {
       console.error(err);
@@ -60,10 +69,31 @@ router.get("/events", (req, res, next) => {
     });
 });
 
-router.get("/events/:id", (req, res, next) => {
-  Event.findOne({ _id: req.params.id })
+router.get("/events/states", (req, res, next) => {
+  Event.distinct("normalizedState")
+    .then(states => {
+      res.status(200).json(states);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    });
+});
+router.get("/events/states/:id", (req, res, next) => {
+  Event.find({ normalizedState: req.params.id })
+    .distinct("normalizedCity")
+    .then(cities => {
+      res.status(200).json(cities);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    });
+});
+router.get("/event/:id", (req, res, next) => {
+  Event.findById(req.params.id)
     .then(event => {
-      res.status(200).json(event);
+      res.status(201).json(event.serialize());
     })
     .catch(err => {
       console.error(err);

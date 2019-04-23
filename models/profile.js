@@ -71,6 +71,7 @@ ProfileSchema.pre("findOne", function(next) {
 ProfileSchema.methods.serialize = function() {
   return {
     id: this._id,
+    user: this.user._id,
     imgURL: this.imgURL,
     profileName: this.profileName,
     genre: this.genre,

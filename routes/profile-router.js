@@ -51,7 +51,7 @@ router.get("/artists/states/:id", (req, res, next) => {
     });
 });
 router.get("/artist/:id", (req, res, next) => {
-  Profile.findOne({ _id: req.params.id })
+  Profile.findOne({ user: req.params.id })
     .then(artist => {
       res.status(200).json(artist.serialize());
     })
