@@ -11,8 +11,8 @@ const SECRET = process.env.SECRET;
 // TEST_DATABASE_URL:
 //   process.env.TEST_DATABASE_URL ||
 //   TEST_DATABASE,
-const DATABASE_URL = process.env.DATABASE_URL || DEVDB;
-const TEST_DATABASE_URL = process.env.TEST_DATABASE_URL || DEVTESTDB;
+const DATABASE_URL = process.env.DATABASE_URL || DATABASE;
+const TEST_DATABASE_URL = process.env.TEST_DATABASE_URL || TEST_DATABASE;
 const PORT = process.env.PORT || 8080;
 const JWT_SECRET = SECRET;
 const JWT_Expiry = 172800;
